@@ -1,10 +1,11 @@
-import { Header } from "../components/Header";
+import { Fragment } from "react";
+import ContainerCards from "../components/ContainerCards";
 
 function Home() {
   return (
-    <div>
-      <Header/>
-    </div>
+    <Fragment>
+      <ContainerCards/>
+    </Fragment>
   );
 }
 
