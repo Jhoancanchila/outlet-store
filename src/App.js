@@ -6,6 +6,7 @@ import Pantalones from './pages/Pantalones';
 import Layout from './components/Layout';
 import NotFoundPage from './pages/NotFoundPage';
 import Cart from './pages/Cart';
+import ProductDetail from './pages/ProductDetail';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
             <Route path='/camisas' element={<Camisas/>}/>
             <Route path='/pantalones' element={<Pantalones/>}/>
             <Route path='/cart' element={<Cart/>}/>
+            <Route path='/:id' element={<ProductDetail/>}/>
             <Route path='*' element={<NotFoundPage/>}/>
           </Routes>
       </Layout>
