@@ -1,10 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const Card = ({image,title,price}) => {
+const Card = ({
+  image,
+  title,
+  price,
+  id
+}) => {
   return (
     <li>
-      <Link to="/" className="group block overflow-hidden">
+      <Link to={`/${id}`} className="group block overflow-hidden">
         <img
           src={image}
           alt="imagen-product"
@@ -21,7 +26,7 @@ const Card = ({image,title,price}) => {
               <span className="tracking-wider text-gray-900"> {`USD ${price}`} </span>
             </p>
             <button
-                class="mt-1.5 inline-block bg-indigo-600 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                class="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
               >
                 Agregar
             </button>
