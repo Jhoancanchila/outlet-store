@@ -1,9 +1,10 @@
-import { FETCH_PRODUCTS_FAILURE, FETCH_PRODUCTS_REQUEST, FETCH_PRODUCTS_SUCCESS } from "./actions";
+import { ADD_TO_CART, FETCH_PRODUCTS_FAILURE, FETCH_PRODUCTS_REQUEST, FETCH_PRODUCTS_SUCCESS } from "./actions";
 
 const initialState = {
   products: [],
   loading: false,
-  error: null
+  error: null,
+  productsCart: []
 };
 
 
@@ -26,6 +27,13 @@ const productsReducers = (state = initialState, action) => {
       return {...state,
         loading:false,
         error:action.payload
+      }
+    case ADD_TO_CART:
+
+      
+      
+      return {...state,
+        productsCart: [...state.productsCart,action.payload]
       }
   
     default:
