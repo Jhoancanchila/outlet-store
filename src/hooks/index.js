@@ -11,7 +11,11 @@ export const useFetchProducts = (category) => {
     const fetchData = async () => {
       dispatch(fetchProductsRequest());
       try {
-        const response = await axios.get(`https://fakestoreapi.com/products/category/${category}`)
+        let url = "https://fakestoreapi.com/products";
+        if(category !== "all"){
+          url = `https://fakestoreapi.com/products/category/${category}`;
+        }
+        const response = await axios.get(url)
         const products = response.data.map(product => ({
           id: product.id,
           image: product.image,
