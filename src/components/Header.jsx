@@ -32,7 +32,9 @@ export const Header = () => {
 
           <div className="flex items-center gap-4">
             <div className="sm:flex sm:gap-4">
-              <img width="30" height="30" src={bag} alt="bag" />              
+              <Link to="/cart">
+                <img width="30" height="30" src={bag} alt="bag" />              
+              </Link>
             </div>
 
             <div className="block md:hidden">
