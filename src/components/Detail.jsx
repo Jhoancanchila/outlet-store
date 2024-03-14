@@ -24,7 +24,7 @@ const Detail = () => {
             </p>
             <button
               href="#"
-              class="mt-8 inline-block bg-indigo-600 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white hover:bg-indigo-700"
+              className="mt-8 inline-block bg-indigo-600 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white hover:bg-indigo-700"
             >
               Agregar
             </button>
