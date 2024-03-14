@@ -1,8 +1,9 @@
 import React from 'react'
+import ContainerCards from '../components/ContainerCards'
 
 const Pantalones = () => {
   return (
-    <div>Pantalones</div>
+    <ContainerCards/>
   )
 }
 

@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Camisas from './pages/Camisas';
 import Pantalones from './pages/Pantalones';
 import Layout from './components/Layout';
+import NotFoundPage from './pages/NotFoundPage';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
             <Route path='/' element={<Home/>}/>
             <Route path='/camisas' element={<Camisas/>}/>
             <Route path='/pantalones' element={<Pantalones/>}/>
+            <Route path='*' element={<NotFoundPage/>}/>
           </Routes>
       </Layout>
     </BrowserRouter>
