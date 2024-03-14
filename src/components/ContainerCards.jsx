@@ -1,21 +1,16 @@
-import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { connect } from 'react-redux';
-import { fetchProductsFailure, fetchProductsRequest, fetchProductsSuccess } from '../redux/actions';
+import React from 'react'
+
 import Card from './Card';
 
+import { useFetchProducts } from '../hooks';
+
 const ContainerCards = ({
-  products,
-  loading,
-  error,
-  fetchProducts,
   title,
-  description
+  description,
+  category
 }) => {
-  useEffect(() => {
-    fetchProducts();
-  },[fetchProducts])
+
+  const { loading, products, error } = useFetchProducts(category);
 
   if(loading) return <div>Cargando</div>
   if(error) return <div>Error {error.message}</div>
@@ -45,27 +40,6 @@ const ContainerCards = ({
   )
 }
 
-const mapStateToProps = state => ({
-  products: state.products,
-  loading: state.loading,
-  error: state.error
-})
 
-const mapDispatchToProps = dispatch => ({
-  fetchProducts: () => {
-    dispatch(fetchProductsRequest());
-    axios.get("https://fakestoreapi.com/products")
-    .then(response => {
-      const products = response.data.map(product => ({
-        id: product.id,
-        image: product.image,
-        title: product.title,
-        price: product.price
-      }));
-      dispatch(fetchProductsSuccess(products))
-    })
-    .catch(error => dispatch(fetchProductsFailure(error)))
-  }
-})
 
-export default connect(mapStateToProps,mapDispatchToProps)(ContainerCards)
+export default ContainerCards

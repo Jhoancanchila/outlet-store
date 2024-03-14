@@ -26,7 +26,7 @@ const Card = ({
               <span className="tracking-wider text-gray-900"> {`USD ${price}`} </span>
             </p>
             <button
-                class="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
               >
                 Agregar
             </button>
