@@ -23,7 +23,10 @@ export const Header = () => {
                 </li>
 
                 <li>
-                <Link className="text-gray-500 transition hover:text-gray-500/75" to="/pantalones">pantalones</Link>
+                <Link className="text-gray-500 transition hover:text-gray-500/75" to="/pantalones">Pantalones</Link>
+                </li>
+                <li>
+                <Link className="text-gray-500 transition hover:text-gray-500/75" to="/tecnología">Tecnología</Link>
                 </li>
 
               </ul>

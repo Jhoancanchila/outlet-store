@@ -5,7 +5,14 @@ import { connect } from 'react-redux';
 import { fetchProductsFailure, fetchProductsRequest, fetchProductsSuccess } from '../redux/actions';
 import Card from './Card';
 
-const ContainerCards = ({products,loading,error,fetchProducts}) => {
+const ContainerCards = ({
+  products,
+  loading,
+  error,
+  fetchProducts,
+  title,
+  description
+}) => {
   useEffect(() => {
     fetchProducts();
   },[fetchProducts])
@@ -17,11 +24,12 @@ const ContainerCards = ({products,loading,error,fetchProducts}) => {
     <section>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <header>
-          <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">camisas formales</h2>
+          <h2 className="text-xl font-bold text-gray-900 sm:text-3xl">{title}</h2>
 
           <p className="mt-4 max-w-md text-gray-500">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Itaque praesentium cumque iure
-            dicta incidunt est ipsam, officia dolor fugit natus?
+            {
+              description
+            }
           </p>
         </header>
 
