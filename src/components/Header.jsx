@@ -19,14 +19,17 @@ export const Header = () => {
             <nav aria-label="Global">
               <ul className="flex items-center gap-6 text-sm">
                 <li>
-                  <Link className="text-gray-500 transition hover:text-gray-500/75" to="/camisas">Camisas</Link>
+                  <Link className="text-gray-500 transition hover:text-gray-500/75" to="/camisas">Mujer</Link>
                 </li>
 
                 <li>
-                <Link className="text-gray-500 transition hover:text-gray-500/75" to="/pantalones">Pantalones</Link>
+                <Link className="text-gray-500 transition hover:text-gray-500/75" to="/pantalones">Hombre</Link>
                 </li>
                 <li>
                 <Link className="text-gray-500 transition hover:text-gray-500/75" to="/tecnología">Tecnología</Link>
+                </li>
+                <li>
+                <Link className="text-gray-500 transition hover:text-gray-500/75" to="/joyería">Joyería</Link>
                 </li>
 
               </ul>
