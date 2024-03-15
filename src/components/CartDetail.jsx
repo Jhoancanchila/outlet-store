@@ -1,39 +1,49 @@
 import { Link } from "react-router-dom";
-import { handleAddTocart } from "../functions";
+import { handleAddTocart, handleDeleteTocart } from "../functions";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const CartDetail = () => {
 
-  const [ value, setValue ] = useState("");
   const dispatch = useDispatch();
-  const storage = localStorage.getItem("productsCart");
+  const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
   const storageTotalValue = localStorage.getItem("valueTotalCart");
   const valueTotalCart = JSON.parse(storageTotalValue);
-  const storageProducts = JSON.parse(storage);
 
   const handleChangeQuantity = ( prod,val ) => {
-    setValue(val)
+    const newProducts = productsCart.map(product => {
+      if(product.id === prod.id){
+        return{
+          ...product,
+          quantity: val
+        }
+      }else{
+        return product
+      }
+    });
+    setProductsCart(newProducts);
     const newProduct = {...prod,quantity: Number(val)};
     handleAddTocart(dispatch,newProduct);
   };
 
-  useEffect(() => {
-
-  },[value]);
+  const removeProduct = ( prod ) => {
+    const newProducts = productsCart.filter(p => p.id !== prod.id);
+    setProductsCart(newProducts);
+    handleDeleteTocart(dispatch,prod);
+  };
   
   return (
     <section>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div className="mx-auto max-w-3xl">
           <header className="text-center">
-            <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Productos carritos</h1>
+            <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Productos carrito</h1>
           </header>
 
           <div className="mt-8">
             <ul className="space-y-4">
               {
-                storageProducts?.map(product => (
+                productsCart?.map(product => (
                   <li key={product.id} className="flex items-center gap-4">
                     <img
                       src={product.image}
@@ -68,7 +78,7 @@ const CartDetail = () => {
                           </select>
                       </form>
 
-                      <button className="text-gray-600 transition hover:text-red-600">
+                      <button onClick={() => removeProduct(product)} className="text-gray-600 transition hover:text-red-600">
                         <span className="sr-only">Remove item</span>
 
                         <svg
