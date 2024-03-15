@@ -1,6 +1,9 @@
 export const FETCH_PRODUCTS_REQUEST = "FETCH_PRODUCTS_REQUEST";
 export const FETCH_PRODUCTS_SUCCESS = "FETCH_PRODUCTS_SUCCESS";
 export const FETCH_PRODUCTS_FAILURE = "FETCH_PRODUCTS_FAILURE";
+export const FETCH_PRODUCT_BY_ID_REQUEST = "FETCH_PRODUCT_BY_ID_REQUEST";
+export const FETCH_PRODUCT_BY_ID_SUCCESS = "FETCH_PRODUCT_BY_ID_SUCCESS";
+export const FETCH_PRODUCT_BY_ID_FAILURE = "FETCH_PRODUCT_BY_ID_FAILURE";
 export const ADD_TO_CART = "ADD_TO_CART";
 
 export const fetchProductsRequest = () => ({
@@ -12,6 +15,17 @@ export const fetchProductsSuccess = (products) => ({
 }) 
 export const fetchProductsFailure = (error) => ({
   type: FETCH_PRODUCTS_FAILURE,
+  payload: error
+}) 
+export const fetchProductByIdRequest = () => ({
+  type: FETCH_PRODUCT_BY_ID_REQUEST
+}) 
+export const fetchProductByIdSuccess = (product) => ({
+  type: FETCH_PRODUCT_BY_ID_SUCCESS,
+  payload: product
+}) 
+export const fetchProductByIdFailure = (error) => ({
+  type: FETCH_PRODUCT_BY_ID_FAILURE,
   payload: error
 }) 
 export const addToCart = (product) => ({
