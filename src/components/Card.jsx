@@ -1,10 +1,17 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { handleAddTocart } from '../functions'
+import { useDispatch } from "react-redux";
 
 const Card = ({ product }) => {
 
   const { image, title, price, id } = product;
+  const dispatch = useDispatch();
+
+  const storageProducts = localStorage.getItem("productsCart");
+  const parseStorage = JSON.parse(storageProducts);
+  const productExist = parseStorage?.some(product => product.id === Number(id));
+
   return (
     <li>
       <Link to={`/detalle/${id}`} className="group block overflow-hidden">
@@ -24,10 +31,12 @@ const Card = ({ product }) => {
               <span className="tracking-wider text-gray-900"> {`USD ${price}`} </span>
             </p>
             <button
-              onClick={() => handleAddTocart(product)}
+              onClick={() => !productExist ? handleAddTocart(dispatch,product) : null}
               className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
             >
-              Agregar
+              {
+                productExist ? "Sacar del carrito" : "Agregar al carrito"
+              }
             </button>
           </div>
         </div>

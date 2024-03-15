@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useFetchProducts } from "../hooks";
 import { useEffect } from "react";
 import { handleAddTocart } from "../functions";
@@ -8,6 +8,10 @@ const Detail = () => {
   const dispatch = useDispatch();
   const { fetchProductById, loading, error, productAdded } = useFetchProducts("all");
   const { id } = useParams();
+  const storageProducts = localStorage.getItem("productsCart");
+  const parseStorage = JSON.parse(storageProducts);
+  const productExist = parseStorage?.some(product => product.id === Number(id));
+  
   
   useEffect(()=>{
     if(id){
@@ -43,11 +47,22 @@ const Detail = () => {
               <span className="tracking-wider text-black-900"> {`USD ${productAdded?.price}`} </span>
             </p>
             <button
-              onClick={() => handleAddTocart(dispatch,productAdded)}
-              className="mt-8 inline-block bg-indigo-600 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white hover:bg-indigo-700"
+              onClick={() => !productExist ? handleAddTocart(dispatch,productAdded) : null}
+              className="mt-8 mr-2 inline-block bg-indigo-600 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white hover:bg-indigo-700"
             >
-              Agregar
+              {
+                productExist ? "Sacar del carrito" : "Agregar al carrito"
+              }
             </button>
+            {
+              parseStorage &&
+              <Link
+                to="/cart"
+                className="mt-8 inline-block bg-indigo-600 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white hover:bg-indigo-700"
+              >
+                Ver Carrito
+              </Link>
+            }
           </div>
         </div>
       </div>
