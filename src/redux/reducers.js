@@ -55,14 +55,17 @@ const productsReducers = (state = initialState, action) => {
         loading:false,
         error:action.payload
       }
-    case ADD_TO_CART:
-
+    case ADD_TO_CART:  
+    let newProductsCart = [];
+    const exist = state.productsCart.some(prod => prod.id === action.payload.id);  
+    if(exist){
+      const removeProduct = state.productsCart.filter(pro => pro.id !== action.payload.id);
+      newProductsCart = [...removeProduct,action.payload];
+    }
+    return {...state,
+      productsCart: exist ? newProductsCart : [...state.productsCart,action.payload]
+    }
       
-      
-      return {...state,
-        productsCart: [...state.productsCart,action.payload]
-      }
-  
     default:
       return state;
   }
