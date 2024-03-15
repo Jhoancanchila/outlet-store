@@ -1,15 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { handleAddTocart } from '../functions'
 
-const Card = ({
-  image,
-  title,
-  price,
-  id
-}) => {
+const Card = ({ product }) => {
+
+  const { image, title, price, id } = product;
   return (
     <li>
-      <Link to={`/${id}`} className="group block overflow-hidden">
+      <Link to={`/detalle/${id}`} className="group block overflow-hidden">
         <img
           src={image}
           alt="imagen-product"
@@ -26,9 +24,10 @@ const Card = ({
               <span className="tracking-wider text-gray-900"> {`USD ${price}`} </span>
             </p>
             <button
-                className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
-              >
-                Agregar
+              onClick={() => handleAddTocart(product)}
+              className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+            >
+              Agregar
             </button>
           </div>
         </div>
