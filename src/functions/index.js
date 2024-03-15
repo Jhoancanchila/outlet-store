@@ -38,6 +38,7 @@ export const handleAddTocart = (dispatch,product) => {
   });
   const subTotal = neArrayValues.reduce((acumulador, valorActual) => acumulador + valorActual, 0).toFixed(2);
   localStorage.setItem("valueTotalCart",JSON.stringify(subTotal));
+  cartQuantity();
 };
 
 export const handleDeleteTocart = (dispatch,product) => {
@@ -63,3 +64,16 @@ export const handleDeleteTocart = (dispatch,product) => {
   const subTotal = neArrayValues.reduce((acumulador, valorActual) => acumulador + valorActual, 0).toFixed(2);
   localStorage.setItem("valueTotalCart",JSON.stringify(subTotal));
 };
+
+export const cartQuantity = () => {
+  const storageCart = localStorage.getItem("productsCart");
+  let totalCart =[];
+  if(storageCart){
+    try {
+      totalCart = JSON.parse(storageCart);
+    } catch (error) {
+      totalCart = [];
+    }
+  };
+  return totalCart.length
+}

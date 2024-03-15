@@ -1,9 +1,21 @@
-import React from 'react'
 import logo from "../assets/logo.png";
 import bag from "../assets/shopping-bag.png";
 import { Link } from 'react-router-dom';
+import { cartQuantity } from '../functions';
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export const Header = () => {
+
+  const product = useSelector(state => state.productsCart);
+  const quantityProductsCart = cartQuantity();
+  const [ quantityProducts,setQuantityProducts] = useState(0);
+
+  useEffect(() => {
+    setQuantityProducts(quantityProductsCart);
+  },[product])
+
+  console.log("🚀 ~ Header ~ quantityProductsCart:", quantityProductsCart)
   return (
     <header className="bg-white border-b border-gray-200 border-solid ">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -37,8 +49,12 @@ export const Header = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="sm:flex sm:gap-4">
+            <div className="sm:flex sm:gap-4 relative">
               <Link to="/cart">
+                {
+                  quantityProducts > 0 &&
+                  <sup className='h-6 w-6 rounded-full bg-indigo-400 text-white p-1 absoluted left-5 top-2'>{quantityProducts < 10 ? quantityProducts : '9+'}</sup>
+                }
                 <img width="30" height="30" src={bag} alt="bag" />              
               </Link>
             </div>
