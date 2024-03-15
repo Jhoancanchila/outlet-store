@@ -5,7 +5,8 @@ import {
   FETCH_PRODUCTS_SUCCESS,
   FETCH_PRODUCT_BY_ID_FAILURE,
   FETCH_PRODUCT_BY_ID_REQUEST,
-  FETCH_PRODUCT_BY_ID_SUCCESS
+  FETCH_PRODUCT_BY_ID_SUCCESS,
+  REMOVE_TO_CART
   } from "./actions";
 
 const initialState = {
@@ -64,6 +65,11 @@ const productsReducers = (state = initialState, action) => {
     }
     return {...state,
       productsCart: exist ? newProductsCart : [...state.productsCart,action.payload]
+    }
+    case REMOVE_TO_CART:  
+    const newListProducts = state.productsCart.filter(product => product.id !== action.payload.id);
+    return {...state,
+      productsCart: newListProducts
     }
       
     default:
