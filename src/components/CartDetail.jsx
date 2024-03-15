@@ -208,13 +208,13 @@ const CartDetail = () => {
 
                 <div className="flex justify-end">
                   <button
-                    className="block rounded bg-indigo-600 px-5 py-3 text-sm text-gray-100 transition hover:bg-gray-600"
+                    className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
                   >
                     Pagar carrito
                   </button>
                   <Link
                     to="/"
-                    className="block rounded bg-indigo-600 px-5 py-3 text-sm text-gray-100 transition hover:bg-gray-600"
+                    className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
                   >
                     Seguir comprando
                   </Link>
