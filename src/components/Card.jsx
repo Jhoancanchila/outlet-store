@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { handleAddTocart } from '../functions'
+import { handleAddTocart, handleDeleteTocart } from '../functions'
 import { useDispatch } from "react-redux";
 
 const Card = ({ product }) => {
@@ -33,7 +33,7 @@ const Card = ({ product }) => {
           <span className="tracking-wider text-gray-900"> {`USD ${price}`} </span>
         </p>
         <button
-          onClick={() => !productExist ? handleAddTocart(dispatch,product) : null}
+          onClick={() => !productExist ? handleAddTocart(dispatch,product) : handleDeleteTocart(dispatch,product)}
           className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
         >
           {

@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom";
 import { handleAddTocart, handleDeleteTocart } from "../functions";
 import { useDispatch } from "react-redux";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import masterLogo  from "../assets/master.png";
 import visaLogo  from "../assets/visa.png";
+import billeteraLogo  from "../assets/billetera.png";
+import pagoLogo  from "../assets/pago.png";
 import Modal from "./Modal";
 
 const CartDetail = () => {
-  const [openModal, setOpenModal] = useState(false)
-  const [steps, setSteps] = useState(0);
+  const stepsStorage = localStorage.getItem("steps");
+  const openModalStorage = localStorage.getItem("openModalStorage");
+  const [openModal, setOpenModal] = useState(openModalStorage ? Boolean(openModalStorage)  : false);
+  const [steps, setSteps] = useState(stepsStorage ? stepsStorage : 0);
   const [dataTransaction, setDataTransaction] = useState({
     numberCard: "",
     monthExp: "",
@@ -22,7 +26,6 @@ const CartDetail = () => {
   const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
   const storageTotalValue = localStorage.getItem("valueTotalCart");
   const valueTotalCart = JSON.parse(storageTotalValue);
-
   const handleChangeQuantity = ( prod,val ) => {
     const newProducts = productsCart.map(product => {
       if(product.id === prod.id){
@@ -49,7 +52,7 @@ const CartDetail = () => {
     let inputValue = e.target.value;
     let trim = inputValue.replace(/[^\d\s]/g, "");
     let formatValue = trim.replace(/(\d{4})(?=\d)/g, "$1 ");
-    if(inputValue.charAt(0) != 4 && inputValue.charAt(0) != 5 ){
+    if(inputValue.charAt(0) !== "4" && inputValue.charAt(0) !== "5" ){
       formatValue=formatValue.substring(0,4);
     };
     setDataTransaction({...dataTransaction,numberCard:formatValue});
@@ -60,7 +63,21 @@ const CartDetail = () => {
     setDataTransaction({...dataTransaction,cvc:trim})
   };
 
-  console.log(dataTransaction)
+  const handleCancelTransaction = () => {
+    setOpenModal(false);
+    setSteps(0);
+    localStorage.removeItem("openModalStorage");
+    localStorage.setItem("steps",0);
+  };
+
+  const handleStepButtonBack = () => {
+    const newStep = steps - 1;
+    setSteps(newStep);
+    localStorage.setItem("steps",newStep);
+  };
+
+  
+  console.log(steps,openModal)
   return (
     <Fragment>
       <section className={openModal ? 'overflow-hidden' : ''}>
@@ -69,7 +86,10 @@ const CartDetail = () => {
             <header className="text-center">
               <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Productos carrito</h1>
             </header>
-
+            {
+              productsCart?.length === 0 &&
+              <h3 className="mt-16 text-center">Sin productos en el carrito!</h3>
+            }
             <div className="mt-8">
               <ul className="space-y-4">
                 {
@@ -137,21 +157,24 @@ const CartDetail = () => {
                   <dl className="space-y-0.5 text-sm text-gray-700">
                     <div className="flex justify-between">
                       <dt>Subtotal</dt>
-                      <dd>{`USD ${valueTotalCart}`}</dd>
+                      <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
                     </div>
                     <div className="flex justify-between !text-base font-medium">
                       <dt>Total</dt>
-                      <dd>{`USD ${valueTotalCart}`}</dd>
+                      <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
                     </div>
                   </dl>
 
                   <div className="flex justify-end">
-                    <button
-                      onClick={() => { setOpenModal(true);localStorage.setItem("openModalStorage",true)}}
-                      className="mt-1.5 mr-2 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
-                    >
-                      Seleccionar metodo de pago
-                    </button>
+                    {
+                      productsCart?.length > 0 &&
+                      <button
+                        onClick={() => { setOpenModal(true);localStorage.setItem("openModalStorage",true)}}
+                        className="mt-1.5 mr-2 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                      >
+                        Seleccionar metodo de pago
+                      </button>
+                    }
                     <Link
                       to="/"
                       className="mt-1.5 inline-block bg-indigo-400 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
@@ -165,9 +188,9 @@ const CartDetail = () => {
           </div>
         </div>
       </section>  
-      <Modal isOpen={localStorage.getItem("openModalStorage")} onClose={() =>setOpenModal(false)}>
+      <Modal isOpen={openModal} onClose={() =>setOpenModal(false)}>
         {
-          !localStorage.getItem("steps") ?
+          steps === 0 ?
           (
             <section>
               <div className="max-w-screen-xl px-4 py-4 sm:px-6 sm:py-8 lg:px-8 lg:py-8">
@@ -175,103 +198,50 @@ const CartDetail = () => {
                 <h2 className="text-3xl font-bold sm:text-4xl">Seleccione método de pago</h2>
               </div>
                 <div className="mt-8 grid grid-cols-1 gap-8 md:mt-16 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
-                  <div className="flex items-start gap-4" onClick={()=>{ setSteps(1);localStorage.setItem("steps",1) }}>
-                    <span className="shrink-0 rounded-lg bg-gray-800 p-4">
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                        <path
-                          d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-                        ></path>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                        ></path>
-                      </svg>
-                    </span>
+                  <div className="cursor-pointer flex h-24 items-center rounded-2xl  gap-4" onClick={()=>{ setSteps(1);localStorage.setItem("steps",1) }}>
+                    <div className="w-16 h-24">
+                      <img src={masterLogo} alt="master" />
+                      <img src={visaLogo} alt="visa" />
+                    </div>
 
                     <div>
                       <h2 className="text-lg font-bold">Tarjeta de crédito</h2>
 
                       <p className="mt-1 text-sm text-gray-300">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error cumque tempore est ab
-                        possimus quisquam reiciendis tempora animi! Quaerat, saepe?
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       </p>
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="shrink-0 rounded-lg bg-gray-800 p-4">
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                        <path
-                          d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-                        ></path>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                        ></path>
-                      </svg>
-                    </span>
+                  <div className="cursor-pointer flex h-24 items-center rounded-2xl  gap-4">
+                    <div className="w-16 h-24">
+                      <img src={billeteraLogo} alt="billetera" />
+                    </div>
 
                     <div>
-                      <h2 className="text-lg font-bold">Lorem, ipsum dolor.</h2>
+                      <h2 className="text-lg font-bold">Billetera electrónica</h2>
 
                       <p className="mt-1 text-sm text-gray-300">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error cumque tempore est ab
-                        possimus quisquam reiciendis tempora animi! Quaerat, saepe?
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       </p>
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="shrink-0 rounded-lg bg-gray-800 p-4">
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                        <path
-                          d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-                        ></path>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-                        ></path>
-                      </svg>
-                    </span>
+                  <div className="cursor-pointer flex h-24 items-center rounded-2xl border-black gap-4">
+                    <div className="w-16 h-24">
+                      <img src={pagoLogo} alt="efectivo" />
+                    </div>
 
                     <div>
-                      <h2 className="text-lg font-bold">Lorem, ipsum dolor.</h2>
+                      <h2 className="text-lg font-bold">En efectivo</h2>
 
                       <p className="mt-1 text-sm text-gray-300">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error cumque tempore est ab
-                        possimus quisquam reiciendis tempora animi! Quaerat, saepe?
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       </p>
                     </div>
                   </div>
+
+                  
                   <button
-                    onClick={() => { setOpenModal(false);localStorage.removeItem("openModalStorage")}}
+                    onClick={handleCancelTransaction}
                     className="mt-1.5 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
                   >
                     Cancelar transacción
@@ -281,14 +251,20 @@ const CartDetail = () => {
             </section>
           )
           :
-          localStorage.getItem("steps") === '1' ?
+          steps === 1 ?
           (
             <section className="p-4">
               <div className="flex flex-col">
                 <div>
-                  <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
-                    Ingresa tus datos
-                  </h1>
+                  <div className="flex items-center">
+                    <span onClick={handleStepButtonBack} className="hover:bg-gray-600 cursor-pointer w-12 h-12 rounded-full flex items-center justify-center p-4 bg-[#efefef]">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+                      </svg>
+                    </span>
+                    <h1 className="text-center ml-4 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
+                      Ingresa tus datos
+                    </h1>
+                  </div>
                   <form action="#" className="mt-8 gap-6 flex-col">                 
                     <div className="w-full">
                       <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Correo electrónico </label>
@@ -346,12 +322,17 @@ const CartDetail = () => {
             </section>
           )
           :
-          localStorage.getItem("steps") === '2' ?
-
+          steps === 2 ?
           (
             <section className="py-8 px-4 sm:p-8">
-              <div className="max-w-xl">
-                <h2 className="text-3xl font-bold sm:text-4xl">Paga con tu tarjeta</h2>
+              <div className="flex items-center">
+                <span onClick={handleStepButtonBack} className="hover:bg-gray-600 cursor-pointer w-12 h-12 rounded-full flex items-center justify-center p-4 bg-[#efefef]">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+                  </svg>
+                </span>
+                <div className="max-w-xl ml-4">
+                  <h2 className="text-3xl font-bold sm:text-4xl">Paga con tu tarjeta</h2>
+                </div>
               </div>
               <form className="flex-col gap-4 mt-8">
                 <div>
@@ -493,7 +474,7 @@ const CartDetail = () => {
 
                   <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                     <button
-                      className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] hover:opacity-10 px-5 py-3 text-xs font-medium uppercase tracking-wide"
+                      className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide"
                     >
                       Continuar con tu pago
                     </button>                   

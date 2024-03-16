@@ -15,7 +15,6 @@ export const Header = () => {
     setQuantityProducts(quantityProductsCart);
   },[product])
 
-  console.log("🚀 ~ Header ~ quantityProductsCart:", quantityProductsCart)
   return (
     <header className="bg-white border-b border-gray-200 border-solid ">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
@@ -53,7 +52,7 @@ export const Header = () => {
               <Link to="/cart">
                 {
                   quantityProducts > 0 &&
-                  <sup className='h-6 w-6 rounded-full bg-indigo-400 text-white p-1 absoluted left-5 top-2'>{quantityProducts < 10 ? quantityProducts : '9+'}</sup>
+                  <sup className='rounded-full p-2 absolute bg-indigo-400 bottom-4 left-4 text-xs h-4 w-4 text-center flex items-center justify-center text-white' >{quantityProducts < 10 ? quantityProducts : '9+'}</sup>
                 }
                 <img width="30" height="30" src={bag} alt="bag" />              
               </Link>
