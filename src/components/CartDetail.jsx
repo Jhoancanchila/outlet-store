@@ -7,7 +7,7 @@ import visaLogo  from "../assets/visa.png";
 import Modal from "./Modal";
 
 const CartDetail = () => {
-  const [openModal, setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
   const [steps, setSteps] = useState(0);
   const [dataTransaction, setDataTransaction] = useState({
     numberCard: "",
@@ -20,6 +20,7 @@ const CartDetail = () => {
   });
   const dispatch = useDispatch();
   const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
+  console.log("🚀 ~ CartDetail ~ productsCart:", productsCart)
   const storageTotalValue = localStorage.getItem("valueTotalCart");
   const valueTotalCart = JSON.parse(storageTotalValue);
 
@@ -49,7 +50,7 @@ const CartDetail = () => {
     let inputValue = e.target.value;
     let trim = inputValue.replace(/[^\d\s]/g, "");
     let formatValue = trim.replace(/(\d{4})(?=\d)/g, "$1 ");
-    if(inputValue.charAt(0) != 4 && inputValue.charAt(0) != 5 ){
+    if(inputValue.charAt(0) !== "4" && inputValue.charAt(0) !== "5" ){
       formatValue=formatValue.substring(0,4);
     };
     setDataTransaction({...dataTransaction,numberCard:formatValue});
@@ -60,7 +61,6 @@ const CartDetail = () => {
     setDataTransaction({...dataTransaction,cvc:trim})
   };
 
-  console.log(dataTransaction)
   return (
     <Fragment>
       <section className={openModal ? 'overflow-hidden' : ''}>
@@ -69,7 +69,10 @@ const CartDetail = () => {
             <header className="text-center">
               <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Productos carrito</h1>
             </header>
-
+            {
+              productsCart.length === 0 &&
+              <h3 className="mt-16 text-center">Sin productos en el carrito!</h3>
+            }
             <div className="mt-8">
               <ul className="space-y-4">
                 {
@@ -137,21 +140,24 @@ const CartDetail = () => {
                   <dl className="space-y-0.5 text-sm text-gray-700">
                     <div className="flex justify-between">
                       <dt>Subtotal</dt>
-                      <dd>{`USD ${valueTotalCart}`}</dd>
+                      <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
                     </div>
                     <div className="flex justify-between !text-base font-medium">
                       <dt>Total</dt>
-                      <dd>{`USD ${valueTotalCart}`}</dd>
+                      <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
                     </div>
                   </dl>
 
                   <div className="flex justify-end">
-                    <button
-                      onClick={() => { setOpenModal(true);localStorage.setItem("openModalStorage",true)}}
-                      className="mt-1.5 mr-2 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
-                    >
-                      Seleccionar metodo de pago
-                    </button>
+                    {
+                      productsCart.length > 0 &&
+                      <button
+                        onClick={() => { setOpenModal(true);localStorage.setItem("openModalStorage",true)}}
+                        className="mt-1.5 mr-2 inline-block bg-indigo-600 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                      >
+                        Seleccionar metodo de pago
+                      </button>
+                    }
                     <Link
                       to="/"
                       className="mt-1.5 inline-block bg-indigo-400 hover:bg-indigo-700 px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
