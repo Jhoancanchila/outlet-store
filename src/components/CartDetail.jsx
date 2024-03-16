@@ -20,7 +20,6 @@ const CartDetail = () => {
   });
   const dispatch = useDispatch();
   const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
-  console.log("🚀 ~ CartDetail ~ productsCart:", productsCart)
   const storageTotalValue = localStorage.getItem("valueTotalCart");
   const valueTotalCart = JSON.parse(storageTotalValue);
 
