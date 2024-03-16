@@ -22,6 +22,11 @@ const CartDetail = () => {
     numberDocument: "",
     numberQuotas: ""
   });
+  const [dataUser, setDataUser] = useState({
+    email: "",
+    name: "",
+    celular: ""
+  });
   const dispatch = useDispatch();
   const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
   const storageTotalValue = localStorage.getItem("valueTotalCart");
@@ -75,9 +80,12 @@ const CartDetail = () => {
     setSteps(newStep);
     localStorage.setItem("steps",newStep);
   };
-
   
-  console.log(steps,openModal)
+  const handleChangeDataUser = (e) => {
+    const { name, value } = e.target;
+    setDataUser({...dataUser,[name]: value});
+  };
+  
   return (
     <Fragment>
       <section className={openModal ? 'overflow-hidden' : ''}>
@@ -269,9 +277,10 @@ const CartDetail = () => {
                     <div className="w-full">
                       <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Correo electrónico </label>
                       <input
+                        onChange={handleChangeDataUser}
+                        value={dataUser.email}
                         autoComplete="off"
                         type="email"
-                        id="Email"
                         name="email"
                         className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                       />
@@ -279,10 +288,11 @@ const CartDetail = () => {
                     <div className="mt-4">
                       <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombres y apellidos </label>
                       <input
+                        onChange={handleChangeDataUser}
+                        value={dataUser.name}
                         autoComplete="off"
                         type="text"
-                        id="Email"
-                        name="email"
+                        name="name"
                         className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                       />
                     </div>
@@ -300,11 +310,12 @@ const CartDetail = () => {
                       <div className="w-full ml-4">
                         <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> celular </label>
                         <input
+                          onChange={handleChangeDataUser}
+                          value={dataUser.celular}
                           autoComplete="off"
                           type="text"
-                          id="Email"
-                          name="email"
-                          className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                          name="celular"
+                          className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                         />
                       </div>
                     </div>
