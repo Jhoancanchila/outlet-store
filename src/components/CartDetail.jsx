@@ -283,29 +283,46 @@ const CartDetail = () => {
           :
           localStorage.getItem("steps") === '1' ?
           (
-            <section className="bg-white min-w-screen-xl">
+            <section className="p-4">
               <div className="flex flex-col">
-                  <div className="max-w-xl lg:max-w-3xl">
-
-                    <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
-                      Ingresa tus datos
-                    </h1>
-                    <form action="#" className="mt-8 gap-6 flex-col">                 
-
+                <div>
+                  <h1 className="mt-6 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
+                    Ingresa tus datos
+                  </h1>
+                  <form action="#" className="mt-8 gap-6 flex-col">                 
+                    <div className="w-full">
+                      <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Correo electrónico </label>
+                      <input
+                        autoComplete="off"
+                        type="email"
+                        id="Email"
+                        name="email"
+                        className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombres y apellidos </label>
+                      <input
+                        autoComplete="off"
+                        type="text"
+                        id="Email"
+                        name="email"
+                        className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                      />
+                    </div>
+                    <div className="flex items-center w-full mt-4">
                       <div>
-                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Correo electrónico </label>
-
-                        <input
-                          autoComplete="off"
-                          type="email"
-                          id="Email"
-                          name="email"
-                          className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                        />
+                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700">país</label>
+                        <select 
+                          className="mt-1  h-12 w-16 rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                          name="" 
+                          id=""
+                        >
+                          <option value="+57">+57</option>
+                        </select>
                       </div>
-                      <div>
-                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombres y apellidos </label>
-
+                      <div className="w-full ml-4">
+                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> celular </label>
                         <input
                           autoComplete="off"
                           type="text"
@@ -314,39 +331,17 @@ const CartDetail = () => {
                           className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                         />
                       </div>
-                      <div className="flex w-full">
-                        <div>
-                          <label htmlFor="Email" className="block text-sm font-medium text-gray-700">país</label>
-                          <input
-                            autoComplete="off"
-                            type="email"
-                            id="Email"
-                            name="email"
-                            className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> celular o número telefónico </label>
-                          <input
-                            autoComplete="off"
-                            type="text"
-                            id="Email"
-                            name="email"
-                            className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                        <button
-                          onClick={()=>{setSteps(2); localStorage.setItem("steps",2)}}
-                          className="inline-block mt-4 shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
-                        >
-                          Continuar con tu pago
-                        </button>                   
-                      </div>
-                    </form>
-                  </div>
-                
+                    </div>
+                    <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
+                      <button
+                        onClick={()=>{setSteps(2); localStorage.setItem("steps",2)}}
+                        className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] hover:opacity-10 px-5 py-3 text-xs font-medium uppercase tracking-wide "
+                      >
+                        Continuar con tu pago
+                      </button>                   
+                    </div>
+                  </form>
+                </div>                
               </div>
             </section>
           )
@@ -354,11 +349,11 @@ const CartDetail = () => {
           localStorage.getItem("steps") === '2' ?
 
           (
-            <section>
+            <section className="py-8 px-4 sm:p-8">
               <div className="max-w-xl">
                 <h2 className="text-3xl font-bold sm:text-4xl">Paga con tu tarjeta</h2>
               </div>
-              <form action="flex-col gap-4">
+              <form className="flex-col gap-4 mt-8">
                 <div>
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> número de la tarjeta </label>
                   <div className="flex">
@@ -372,45 +367,49 @@ const CartDetail = () => {
                       className="relative pl-4 mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                     />
                     {
-                      dataTransaction.numberCard.charAt(0) === '4' ? (<img className="absolute right-5 " width={40} src={visaLogo} alt="visa" />) : dataTransaction.numberCard.charAt(0) === '5' ? (<img className="absolute right-5
+                      dataTransaction.numberCard.charAt(0) === '4' ? (<img className="absolute right-8 sm:right-16 " width={40} src={visaLogo} alt="visa" />) : dataTransaction.numberCard.charAt(0) === '5' ? (<img className="absolute right-8 sm:right-16
                     " width={40} src={masterLogo} alt="master" />) : null
                       
                     }
                   </div>
                 </div>
 
-                <div className="flex">
+                <div className="mt-4 flex items-center ">
                   <div>
                     <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Expira el</label>
-                    <select 
-                    onChange={(e)=> setDataTransaction({...dataTransaction,monthExp: e.target.value})}
-                    value={dataTransaction.monthExp}
-                    name="" 
-                    id=""
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                    >
-                      {
-                        [1,2,3,4,5,6,7,8,9,10,11,12].map(op => <option value={op}>{op}</option>)
-                      }
-                      
-                    </select>
-                    
+                    <div className="flex">
+                      <div className="w-16">
+                        <select 
+                        onChange={(e)=> setDataTransaction({...dataTransaction,monthExp: e.target.value})}
+                        value={dataTransaction.monthExp}
+                        name="" 
+                        id=""
+                        className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                        >
+                          {
+                            [1,2,3,4,5,6,7,8,9,10,11,12].map(op => <option value={op}>{op}</option>)
+                          }
+                          
+                        </select>
+                        
+                      </div>
+                      <div className="mx-4 w-16">
+                        <select 
+                        onChange={(e)=> setDataTransaction({...dataTransaction,yearExp: e.target.value})}
+                        value={dataTransaction.yearExp}
+                        name="" 
+                        id=""
+                        className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                        >
+                          {
+                            [2024,2025,2026,2027,2028,2029,2030].map(op => <option value={op}>{op}</option>)
+                          }
+                        </select>                
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <select 
-                    onChange={(e)=> setDataTransaction({...dataTransaction,yearExp: e.target.value})}
-                    value={dataTransaction.yearExp}
-                    name="" 
-                    id=""
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                    >
-                      {
-                        [2024,2025,2026,2027,2028,2029,2030].map(op => <option value={op}>{op}</option>)
-                      }
-                    </select>                
-                  </div>
-                  <div>
-                  <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> cvc (código de seguridad) </label>
+                  <div className="w-full">
+                  <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> cvc</label>
                   <input
                     onChange={handleCvcCard}
                     value={dataTransaction.cvc}
@@ -420,7 +419,7 @@ const CartDetail = () => {
                   />
                 </div>
                 </div>
-                <div>
+                <div className="mt-4">
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombre en la tarjeta</label>
                   <input
                     onChange={(e)=> setDataTransaction({...dataTransaction,name: e.target.value})}
@@ -429,50 +428,49 @@ const CartDetail = () => {
                     type="text"
                     id="Email"
                     name="email"
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                   />
                 </div>
-                <div className="flex">
-                  <div>
-                    <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> </label>
+                <div className="mt-4">
+                  <label htmlFor="Name" className="block text-sm font-medium text-gray-700"><label htmlFor="Email" className="block text-sm font-medium text-gray-700">Identificación del tarjetahabiente </label> </label>
+                  <div className="flex">
                     <select 
                     name="" 
                     id=""
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    className="mt-1 h-12 w-16 rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                     >
                       {
                         <option value="cc">cc</option>
                       }
                     </select>
                     
+                    <div className="ml-4 w-full">
+                    <input
+                      onChange={(e)=> setDataTransaction({...dataTransaction,numberDocument: e.target.value})}
+                      value={dataTransaction.numberDocument}
+                      type="text"
+                      autoComplete="off"
+                      id="Email"
+                      name="email"
+                      className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                    </div>
                   </div>
-                  <div>
-                  <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Identificación del tarjetahabiente </label>
-                  <input
-                    onChange={(e)=> setDataTransaction({...dataTransaction,numberDocument: e.target.value})}
-                    value={dataTransaction.numberDocument}
-                    type="text"
-                    autoComplete="off"
-                    id="Email"
-                    name="email"
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                  />
-                </div>
                   
                 </div>
-                <div>
-                    <label htmlFor="Email" className="block text-sm font-medium text-gray-700">Número de cuotas </label>
-                    <select 
-                    onChange={(e)=> setDataTransaction({...dataTransaction,numberQuotas: e.target.value})}
-                    value={dataTransaction.numberQuotas}
-                    name="" 
-                    id=""
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                    >
-                      {
-                        [1,2,3,4,5,6,7,8,9,10,11,12].map(op => <option value={op}>{op}</option>)
-                      }
-                    </select>
+                <div className="mt-4">
+                  <label htmlFor="Email" className="block text-sm font-medium text-gray-700">Número de cuotas </label>
+                  <select 
+                  onChange={(e)=> setDataTransaction({...dataTransaction,numberQuotas: e.target.value})}
+                  value={dataTransaction.numberQuotas}
+                  name="" 
+                  id=""
+                  className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                  >
+                    {
+                      [1,2,3,4,5,6,7,8,9,10,11,12].map(op => <option value={op}>{op}</option>)
+                    }
+                  </select>
                     
                   </div>
 
@@ -495,7 +493,7 @@ const CartDetail = () => {
 
                   <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                     <button
-                      className="inline-block mt-4 shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                      className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] hover:opacity-10 px-5 py-3 text-xs font-medium uppercase tracking-wide"
                     >
                       Continuar con tu pago
                     </button>                   
