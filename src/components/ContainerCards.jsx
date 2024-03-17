@@ -3,6 +3,7 @@ import { SpinnerInfinity } from 'spinners-react/lib/esm/SpinnerInfinity';
 import Card from './Card';
 
 import { useFetchProducts } from '../hooks';
+import Error from './Error';
 
 const ContainerCards = ({
   title,
@@ -24,7 +25,7 @@ const ContainerCards = ({
       </div>
     )
   };
-  if(error) return <div>Error {error.message}</div>
+  if(error) return <Error error={error} />
 
   return (
     <section>
