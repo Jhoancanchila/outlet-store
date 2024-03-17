@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { fetchTransaction, handleAddTocart, handleDeleteTocart } from "../functions";
 import { useDispatch } from "react-redux";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import masterLogo  from "../assets/master.png";
 import visaLogo  from "../assets/visa.png";
 import billeteraLogo  from "../assets/billetera.png";
@@ -11,32 +11,101 @@ import { clearCart } from "../redux/actions";
 import { SpinnerInfinity } from 'spinners-react/lib/esm/SpinnerInfinity';
 
 const CartDetail = () => {
+
+  //validar correo
+  // eslint-disable-next-line no-useless-escape
+  let emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+  //Structures datas
+  const structurePayment = {
+    NUMBER_CARD: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    },
+    MONTH_EXP: {
+      val: "1",
+      error: false,
+      textSuggestion: "",
+    },
+    YEAR_EXP: {
+      val: "2024",
+      error: false,
+      textSuggestion: "",
+    },
+    CVC: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    },
+    NAME_TITULAR: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    },
+    DOCUMENT_TITULAR: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    },
+    NUMBER_QUOTAS: {
+      val: "1",
+      error: false,
+      textSuggestion: "",
+    },
+    CHECKED: {
+      val: false,
+      error: false,
+      textSuggestion: "",
+    }
+  };
+  const structureDataUser = {
+    EMAIL: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    },
+    NAME: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    },
+    CELULAR: {
+      val: "",
+      error: false,
+      textSuggestion: "",
+    }
+  }
+
   const stepsStorage = parseInt(localStorage.getItem("steps"),10);
   const openModalStorage = localStorage.getItem("openModalStorage");
+  const dataUserStorage = localStorage.getItem("dataUser");
+  const dataPaymentStorage = localStorage.getItem("dataPayment");
+
   const [openModal, setOpenModal] = useState(openModalStorage ? Boolean(openModalStorage)  : false);
   const [loading, setLoading] = useState(false);
   const [showViewConfirmPay, setShowViewConfirmPay] = useState(0);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [steps, setSteps] = useState(stepsStorage ? stepsStorage : 0);
-  const [dataTransaction, setDataTransaction] = useState({
-    numberCard: "",
-    monthExp: "",
-    yearExp: "",
-    cvc: "",
-    name: "",
-    numberDocument: "",
-    numberQuotas: ""
-  });
-  const [dataUser, setDataUser] = useState({
-    email: "",
-    name: "",
-    celular: ""
-  });
+  
+  
+  const [dataUser, setDataUser] = useState(JSON.parse(dataUserStorage) ?? structureDataUser);
+  const [dataTransaction, setDataTransaction] = useState(JSON.parse(dataPaymentStorage) ?? structurePayment);
   const dispatch = useDispatch();
   const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
   const storageTotalValue = localStorage.getItem("valueTotalCart");
   const valueTotalCart = JSON.parse(storageTotalValue);
+
+  useEffect(() => {
+    localStorage.setItem("dataUser",JSON.stringify(dataUser));
+  },[dataUser]);
+
+  useEffect(() => {
+    localStorage.setItem("dataPayment",JSON.stringify(dataTransaction));
+  },[dataTransaction]);
+
+  
   const handleChangeQuantity = ( prod,val ) => {
     const newProducts = productsCart.map(product => {
       if(product.id === prod.id){
@@ -61,17 +130,37 @@ const CartDetail = () => {
 
   const handleNumberCard = ( e ) => {
     let inputValue = e.target.value;
+    //limpiar espacios y restringir letras
     let trim = inputValue.replace(/[^\d\s]/g, "");
+
+    //Espacio cada cuatro números
     let formatValue = trim.replace(/(\d{4})(?=\d)/g, "$1 ");
+
+    //cuatro primeros numeros cuando no sea una tarjeta válida
     if(inputValue.charAt(0) !== "4" && inputValue.charAt(0) !== "5" ){
       formatValue=formatValue.substring(0,4);
     };
-    setDataTransaction({...dataTransaction,numberCard:formatValue});
+    setDataTransaction({
+      ...dataTransaction,
+      "NUMBER_CARD": {
+      val: formatValue,
+      error: false,
+      textSuggestion:""
+    }})
+    /* setDataTransaction({...dataTransaction,numberCard:formatValue}); */
   };
+
   const handleCvcCard = ( e ) => {
     let inputValue = e.target.value;
     let trim = inputValue.replace(/[^\d\s]/g, "");
-    setDataTransaction({...dataTransaction,cvc:trim})
+    setDataTransaction({
+      ...dataTransaction,
+      "CVC": {
+      val: trim,
+      error: false,
+      textSuggestion:""
+    }})
+    /* setDataTransaction({...dataTransaction,cvc:trim}) */
   };
 
   const handleCancelTransaction = () => {
@@ -89,18 +178,106 @@ const CartDetail = () => {
     localStorage.setItem("steps",newStep);
   };
   
-  const handleChangeDataUser = (e) => {
-    const { name, value } = e.target;
-    setDataUser({...dataUser,[name]: value});
+  const handleChangeDataUser = (e,key) => {
+    const { value } = e.target;
+    setDataUser({
+    ...dataUser,
+    [key]: {
+    val: value,
+    error: false,
+    textSuggestion:""
+    }})
   };
 
+  const handleChangeDataPayment = (e,key) => {
+    const { value, checked } = e.target;
+    setDataTransaction({
+    ...dataTransaction,
+    [key]: {
+    val: key === "CHECKED" ? checked : value,
+    error: false,
+    textSuggestion:""
+    }})
+  };
+
+  const handleButtonDataUser = (e) => {
+    e.preventDefault();
+    if(!dataUser.EMAIL.val || !dataUser.NAME.val || !dataUser.CELULAR.val || !emailRegex.test(dataUser.EMAIL.val)){
+      setDataUser({
+      "EMAIL": {
+        val: dataUser.EMAIL.val,
+        error: !emailRegex.test(dataUser.EMAIL.val) || !dataUser.EMAIL.val ? true : false,
+        textSuggestion: (!emailRegex.test(dataUser.EMAIL.val) && dataUser.EMAIL.val) ? "Ingresa un correo válido" : !dataUser.EMAIL.val ? "Campo obligatorio" : ""
+        },
+      "NAME": {
+        val: dataUser.NAME.val,
+        error: !dataUser.NAME.val ? true : false,
+        textSuggestion: !dataUser.NAME.val ? "Campo obligatorio" : ""
+        },
+      "CELULAR": {
+        val: dataUser.CELULAR.val,
+        error: !dataUser.CELULAR.val ? true : false,
+        textSuggestion: !dataUser.CELULAR.val ? "Campo obligatorio" : ""
+        }
+      });
+    }else{
+      setSteps(2);
+      localStorage.setItem("steps",2);
+    }     
+  };
   const handleContinuePay = (e) => {
-    setShowViewConfirmPay(1);
-    localStorage.setItem("valueShowViewConfirmPay",1);
-    setSteps(0); 
-    localStorage.removeItem("steps",3);
-    localStorage.removeItem("openModalStorage");
-    setOpenModal(false);
+    e.preventDefault();
+    if(!dataTransaction.NUMBER_CARD.val || !dataTransaction.CVC.val || !dataTransaction.NAME_TITULAR.val || !dataTransaction.DOCUMENT_TITULAR.val || !dataTransaction.CHECKED.val){
+      setDataTransaction({
+      "NUMBER_CARD": {
+        val: dataTransaction.NUMBER_CARD.val,
+        error: !dataTransaction.NUMBER_CARD.val ? true : false,
+        textSuggestion: !dataTransaction.NUMBER_CARD.val ? "Campo obligatorio" : ""
+        },
+      "MONTH_EXP": {
+        val: "1",
+        error: false,
+        textSuggestion: "",
+      },
+      "YEAR_EXP": {
+        val: "2024",
+        error: false,
+        textSuggestion: "",
+      },
+      "CVC": {
+        val: dataTransaction.CVC.val,
+        error: !dataTransaction.CVC.val ? true : false,
+        textSuggestion: !dataTransaction.CVC.val ? "Campo obligatorio" : ""
+        },
+      "NAME_TITULAR": {
+        val: dataTransaction.NAME_TITULAR.val,
+        error: !dataTransaction.NAME_TITULAR.val ? true : false,
+        textSuggestion: !dataTransaction.NAME_TITULAR.val ? "Campo obligatorio" : ""
+        },
+      "DOCUMENT_TITULAR": {
+        val: dataTransaction.DOCUMENT_TITULAR.val,
+        error: !dataTransaction.DOCUMENT_TITULAR.val ? true : false,
+        textSuggestion: !dataTransaction.DOCUMENT_TITULAR.val ? "Campo obligatorio" : ""
+        },
+      "NUMBER_QUOTAS": {
+        val: "1",
+        error: false,
+        textSuggestion: "",
+      },
+      "CHECKED": {
+        val: dataTransaction.CHECKED.val,
+        error: !dataTransaction.CHECKED.val ? true : false,
+        textSuggestion: !dataTransaction.CHECKED.val ? "Campo obligatorio" : ""
+        }
+      });
+    }else{
+      setShowViewConfirmPay(1);
+      localStorage.setItem("valueShowViewConfirmPay",1);
+      setSteps(0); 
+      localStorage.removeItem("steps");
+      localStorage.removeItem("openModalStorage");
+      setOpenModal(false);
+    }     
   };
 
   const handleTransaction = (e) => {
@@ -242,15 +419,15 @@ const CartDetail = () => {
                 <dl className="space-y-0.5 text-sm text-gray-700">
                   <div className="flex justify-between">
                     <dt>Nombre</dt>
-                    <dd>{dataTransaction.name}</dd>
+                    <dd>{dataTransaction.NAME_TITULAR.val}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt>Cédula</dt>
-                    <dd>{dataTransaction.numberDocument}</dd>
+                    <dd>{dataTransaction.DOCUMENT_TITULAR.val}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt>Nro Tarjeta</dt>
-                    <dd>{`**** **** **** ${dataTransaction.numberCard.substring(14,dataTransaction.numberCard.length)}`}</dd>
+                    <dd>{`**** **** **** ${dataTransaction.NUMBER_CARD.val.substring(14,dataTransaction.NUMBER_CARD.val.length)}`}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt>Total a pagar</dt>
@@ -466,54 +643,68 @@ const CartDetail = () => {
                     </h1>
                   </div>
                   <form action="#" className="mt-8 gap-6 flex-col">                 
-                    <div className="w-full">
+                    <div className="w-full h-24">
                       <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Correo electrónico </label>
                       <input
-                        onChange={handleChangeDataUser}
-                        value={dataUser.email}
+                        onChange={(e)=>handleChangeDataUser(e,"EMAIL")}
+                        value={dataUser.EMAIL.val}
                         autoComplete="off"
                         type="email"
                         name="email"
-                        className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                        className={`${dataUser.EMAIL.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
                       />
+                      {
+                        dataUser.EMAIL.error &&
+                        <span className="text-red-500">{dataUser.EMAIL.textSuggestion}</span>
+                      }
                     </div>
-                    <div className="mt-4">
+                    <div className="h-24 mt-2">
                       <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombres y apellidos </label>
                       <input
-                        onChange={handleChangeDataUser}
-                        value={dataUser.name}
+                        onChange={(e)=>handleChangeDataUser(e,"NAME")}
+                        value={dataUser.NAME.val}
                         autoComplete="off"
                         type="text"
                         name="name"
-                        className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                        className={`${dataUser.NAME.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
                       />
+                      {
+                        dataUser.NAME.error &&
+                        <span className="text-red-500">{dataUser.NAME.textSuggestion}</span>
+                      }
                     </div>
-                    <div className="flex items-center w-full mt-4">
-                      <div>
-                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700">país</label>
-                        <select 
-                          className="mt-1  h-12 w-16 rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                          name="" 
-                          id=""
-                        >
-                          <option value="+57">+57</option>
-                        </select>
+                    <div className="h-24">
+                      <div className="flex items-center w-full mt-2">
+                        <div>
+                          <label htmlFor="Email" className="block text-sm font-medium text-gray-700">país</label>
+                          <select 
+                            className="mt-1  h-12 w-16 rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                            name="" 
+                            id=""
+                          >
+                            <option value="+57">+57</option>
+                          </select>
+                        </div>
+                        <div className="w-full ml-4">
+                          <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> celular </label>
+                          <input
+                            onChange={(e)=>handleChangeDataUser(e,"CELULAR")}
+                            value={dataUser.CELULAR.val}
+                            autoComplete="off"
+                            type="text"
+                            name="celular"
+                            className={`${dataUser.CELULAR.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
+                          />
+                        </div>
                       </div>
-                      <div className="w-full ml-4">
-                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> celular </label>
-                        <input
-                          onChange={handleChangeDataUser}
-                          value={dataUser.celular}
-                          autoComplete="off"
-                          type="text"
-                          name="celular"
-                          className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                        />
-                      </div>
+                      {
+                        dataUser.CELULAR.error &&
+                        <span className="text-red-500">{dataUser.CELULAR.textSuggestion}</span>
+                      }
                     </div>
                     <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                       <button
-                        onClick={()=>{setSteps(2); localStorage.setItem("steps",2)}}
+                        onClick={(e) => handleButtonDataUser(e)}
                         className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide "
                       >
                         Continuar con tu pago
@@ -539,115 +730,135 @@ const CartDetail = () => {
                 </div>
               </div>
               <form className="flex-col gap-4 mt-8">
-                <div>
+                <div className="h-24">
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> número de la tarjeta </label>
                   <div className="flex">
 
                     <input
                       onChange={handleNumberCard}
-                      value={dataTransaction.numberCard}
+                      value={dataTransaction.NUMBER_CARD.val}
                       type="text"
                       maxLength={19}
                       autoComplete="off"
-                      className="relative pl-4 mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                      className={`${dataTransaction.NUMBER_CARD.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
                     />
                     {
-                      dataTransaction.numberCard.charAt(0) === '4' ? (<img className="absolute right-8 sm:right-16 " width={40} src={visaLogo} alt="visa" />) : dataTransaction.numberCard.charAt(0) === '5' ? (<img className="absolute right-8 sm:right-16
+                      dataTransaction.NUMBER_CARD.val.charAt(0) === '4' ? (<img className="absolute right-8 sm:right-16 " width={40} src={visaLogo} alt="visa" />) : dataTransaction.NUMBER_CARD.val.charAt(0) === '5' ? (<img className="absolute right-8 sm:right-16
                     " width={40} src={masterLogo} alt="master" />) : null
                       
                     }
                   </div>
+                    {
+                      dataTransaction.NUMBER_CARD.error &&
+                      <span className="text-red-500">{dataTransaction.NUMBER_CARD.textSuggestion}</span>
+                    }
                 </div>
-
-                <div className="mt-4 flex items-center ">
-                  <div>
-                    <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Expira el</label>
-                    <div className="flex">
-                      <div className="w-16">
-                        <select 
-                        onChange={(e)=> setDataTransaction({...dataTransaction,monthExp: e.target.value})}
-                        value={dataTransaction.monthExp}
-                        name="" 
-                        id=""
-                        className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                        >
-                          {
-                            [1,2,3,4,5,6,7,8,9,10,11,12].map(op => <option value={op}>{op}</option>)
-                          }
-                          
-                        </select>
-                        
+                  <div className="h-24">
+                    <div className="mt-4 flex items-center">
+                      <div>
+                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Expira el</label>
+                        <div className="flex">
+                          <div className="w-16">
+                            <select 
+                            onChange={(e) => handleChangeDataPayment(e,"MONTH_EXP")}
+                            value={dataTransaction.MONTH_EXP.val}
+                            name="" 
+                            id=""
+                            className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                            >
+                              {
+                                [1,2,3,4,5,6,7,8,9,10,11,12].map(op => <option value={op}>{op}</option>)
+                              }
+                              
+                            </select>
+                            
+                          </div>
+                          <div className="mx-4 w-16">
+                            <select 
+                            onChange={(e) => handleChangeDataPayment(e,"YEAR_EXP")}
+                            value={dataTransaction.YEAR_EXP.val}
+                            name="" 
+                            id=""
+                            className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                            >
+                              {
+                                [2024,2025,2026,2027,2028,2029,2030].map(op => <option value={op}>{op}</option>)
+                              }
+                            </select>                
+                          </div>
+                        </div>
                       </div>
-                      <div className="mx-4 w-16">
-                        <select 
-                        onChange={(e)=> setDataTransaction({...dataTransaction,yearExp: e.target.value})}
-                        value={dataTransaction.yearExp}
-                        name="" 
-                        id=""
-                        className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                        >
-                          {
-                            [2024,2025,2026,2027,2028,2029,2030].map(op => <option value={op}>{op}</option>)
-                          }
-                        </select>                
-                      </div>
+                      <div className="w-full">
+                      <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> cvc</label>
+                      <input
+                        onChange={handleCvcCard}
+                        value={dataTransaction.CVC.val}
+                        type="text"
+                        maxLength={3}
+                        className={`${dataTransaction.CVC.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
+                      />
                     </div>
+                    </div>
+                      {
+                        dataTransaction.CVC.error &&
+                        <span className="text-red-500 ml-40">{dataTransaction.CVC.textSuggestion}</span>
+                      }
                   </div>
-                  <div className="w-full">
-                  <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> cvc</label>
-                  <input
-                    onChange={handleCvcCard}
-                    value={dataTransaction.cvc}
-                    type="text"
-                    maxLength={3}
-                    className="mt-1 h-12 pl-4 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                  />
-                </div>
-                </div>
-                <div className="mt-4">
+                <div className="mt-4 h-24">
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombre en la tarjeta</label>
                   <input
-                    onChange={(e)=> setDataTransaction({...dataTransaction,name: e.target.value})}
-                    value={dataTransaction.name}
+                    onChange={(e) => handleChangeDataPayment(e,"NAME_TITULAR")}
+                    value={dataTransaction.NAME_TITULAR.val}
                     autoComplete="off"
                     type="text"
                     id="Email"
                     name="email"
-                    className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    className={`${dataTransaction.NAME_TITULAR.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
                   />
+                  {
+                    dataTransaction.NAME_TITULAR.error &&
+                    <span className="text-red-500">{dataTransaction.NAME_TITULAR.textSuggestion}</span>
+                  }
                 </div>
-                <div className="mt-4">
-                  <label htmlFor="Name" className="block text-sm font-medium text-gray-700"><label htmlFor="Email" className="block text-sm font-medium text-gray-700">Identificación del tarjetahabiente </label> </label>
-                  <div className="flex">
-                    <select 
-                    name="" 
-                    id=""
-                    className="mt-1 h-12 w-16 rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                    >
-                      {
-                        <option value="cc">cc</option>
-                      }
-                    </select>
-                    
-                    <div className="ml-4 w-full">
-                    <input
-                      onChange={(e)=> setDataTransaction({...dataTransaction,numberDocument: e.target.value})}
-                      value={dataTransaction.numberDocument}
-                      type="text"
-                      autoComplete="off"
-                      id="Email"
-                      name="email"
-                      className="mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                    />
+                <div className="h-24">
+
+                  <div className="mt-4">
+                    <label htmlFor="Name" className="block text-sm font-medium text-gray-700"><label htmlFor="Email" className="block text-sm font-medium text-gray-700">Identificación del tarjetahabiente </label> </label>
+                    <div className="flex">
+                      <select 
+                      name="" 
+                      id=""
+                      className="mt-1 h-12 w-16 rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                      >
+                        {
+                          <option value="cc">cc</option>
+                        }
+                      </select>
+                      
+                      <div className="ml-4 w-full">
+                      <input
+                        onChange={(e) => handleChangeDataPayment(e,"DOCUMENT_TITULAR")}
+                        value={dataTransaction.DOCUMENT_TITULAR.val}
+                        type="text"
+                        autoComplete="off"
+                        id="Email"
+                        name="email"
+                        className={`${dataTransaction.DOCUMENT_TITULAR.error ? 'border-red-500 border-2' : ''} mt-1 pl-4 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm`}
+                      />
+                      </div>
                     </div>
+                    
                   </div>
-                  
+                  {
+                    dataTransaction.DOCUMENT_TITULAR.error &&
+                    <span className="text-red-500 ml-20">{dataTransaction.DOCUMENT_TITULAR.textSuggestion}</span>
+                  }
                 </div>
                 <div className="mt-4">
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700">Número de cuotas </label>
                   <select 
-                  onChange={(e)=> setDataTransaction({...dataTransaction,numberQuotas: e.target.value})}
-                  value={dataTransaction.numberQuotas}
+                  onChange={(e) => handleChangeDataPayment(e,"NUMBER_QUOTAS")}
+                  value={dataTransaction.NUMBER_QUOTAS.val}
                   name="" 
                   id=""
                   className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
@@ -659,13 +870,12 @@ const CartDetail = () => {
                     
                   </div>
 
-                  <div className="col-span-6 mt-4">
+                  <div className="col-span-6 mt-4 h-6">
                     <label htmlFor="MarketingAccept" className="flex gap-4">
                       <input
+                        onChange={(e) => handleChangeDataPayment(e,"CHECKED")}
+                        value={dataTransaction.CHECKED.val}
                         type="checkbox"
-                        autoComplete="off"
-                        id="MarketingAccept"
-                        name="marketing_accept"
                         className="size-5 rounded-md border-gray-200 bg-white shadow-sm"
                       />
 
@@ -673,12 +883,16 @@ const CartDetail = () => {
                         Acepto haber leído los términos y condiciones
                       </span>
                     </label>
+                    {
+                      dataTransaction.CHECKED.error &&
+                      <span className="text-red-500">{dataTransaction.CHECKED.textSuggestion}</span>
+                    }
                   </div>
                   
 
                   <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                     <button
-                      onClick={handleContinuePay}
+                      onClick={(e) => handleContinuePay(e)}
                       className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide"
                     >
                       Continuar con tu pago
