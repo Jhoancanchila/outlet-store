@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect */
 import "jest-localstorage-mock";
 import { handleAddTocart, handleDeleteTocart, cartQuantity, fetchTransaction } from "./index";
 
@@ -51,6 +52,7 @@ describe("carQuantity",()=>{
   beforeEach(() => {
     localStorage.clear()
   })
+  // eslint-disable-next-line jest/valid-title
   it('It will return the quantity of products in the array', () => {
     const storageCart = [{ id: 1, quantity: 1 }, { id: 2, quantity: 2 }];
     localStorage.getItem.mockReturnValue(JSON.stringify(storageCart));
