@@ -130,10 +130,12 @@ const CartDetail = () => {
   };
 
   const handleNumberCard = ( e ) => {
-    let inputValue = e.target.value;
+
+    //restringir espacios
+    let inputValue = e.target.value.replace(/ /g, "");
     //limpiar espacios y restringir letras
     let trim = inputValue.replace(/[^\d\s]/g, "");
-
+    
     //Espacio cada cuatro números
     let formatValue = trim.replace(/(\d{4})(?=\d)/g, "$1 ");
 
