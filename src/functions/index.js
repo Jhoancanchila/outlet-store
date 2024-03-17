@@ -76,4 +76,18 @@ export const cartQuantity = () => {
     }
   };
   return totalCart.length
+};
+
+export const fetchTransaction = ( data ) => {
+  return new Promise((resolve,reject)=>{
+    if(data === 1 || data === 4 || data === 5){
+      setTimeout(() => {
+        resolve({status:200,message:"Transacción exitosa"})
+      }, 3000);
+    }else{
+      setTimeout(() => {
+        reject({status:401, message:"Hubo un error procesando el pago,por favor verifica la información!"})
+      }, 3000);
+    }
+  })
 }

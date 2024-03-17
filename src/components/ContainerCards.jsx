@@ -1,4 +1,4 @@
-import React from 'react'
+import { SpinnerInfinity } from 'spinners-react/lib/esm/SpinnerInfinity';
 
 import Card from './Card';
 
@@ -12,7 +12,18 @@ const ContainerCards = ({
 
   const { loading, products, error } = useFetchProducts(category);
 
-  if(loading) return <div>Cargando</div>
+  if(loading){
+    return(
+      <div className="w-full h-full rounded-3xl bg-transparent z-20 flex items-center justify-center absolute top-0 left-0 bottom-0 right-0">
+        <SpinnerInfinity
+          size={50}
+          color="#dfff61"
+          secondaryColor="#2c2a29"
+          enabled={loading}
+        />
+      </div>
+    )
+  };
   if(error) return <div>Error {error.message}</div>
 
   return (
