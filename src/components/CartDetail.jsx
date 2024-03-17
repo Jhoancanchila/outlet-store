@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { fetchTransaction, handleAddTocart, handleDeleteTocart } from "../functions";
 import { useDispatch } from "react-redux";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import masterLogo  from "../assets/master.png";
 import visaLogo  from "../assets/visa.png";
 import billeteraLogo  from "../assets/billetera.png";
