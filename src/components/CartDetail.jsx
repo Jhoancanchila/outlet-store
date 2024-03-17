@@ -78,13 +78,16 @@ const CartDetail = () => {
   }
 
   const stepsStorage = parseInt(localStorage.getItem("steps"),10);
+  const confirmPayViewStorage = parseInt(localStorage.getItem("valueShowViewConfirmPay"),10);
   const openModalStorage = localStorage.getItem("openModalStorage");
   const dataUserStorage = localStorage.getItem("dataUser");
   const dataPaymentStorage = localStorage.getItem("dataPayment");
+  const storageTotalValue = localStorage.getItem("valueTotalCart");
+  const valueTotalCart = JSON.parse(storageTotalValue);
 
   const [openModal, setOpenModal] = useState(openModalStorage ? Boolean(openModalStorage)  : false);
   const [loading, setLoading] = useState(false);
-  const [showViewConfirmPay, setShowViewConfirmPay] = useState(0);
+  const [showViewConfirmPay, setShowViewConfirmPay] = useState(confirmPayViewStorage ? confirmPayViewStorage : 0);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [steps, setSteps] = useState(stepsStorage ? stepsStorage : 0);
@@ -94,8 +97,6 @@ const CartDetail = () => {
   const [dataTransaction, setDataTransaction] = useState(JSON.parse(dataPaymentStorage) ?? structurePayment);
   const dispatch = useDispatch();
   const [ productsCart, setProductsCart ] = useState(JSON.parse(localStorage.getItem("productsCart")));
-  const storageTotalValue = localStorage.getItem("valueTotalCart");
-  const valueTotalCart = JSON.parse(storageTotalValue);
 
   useEffect(() => {
     localStorage.setItem("dataUser",JSON.stringify(dataUser));
@@ -167,6 +168,10 @@ const CartDetail = () => {
     setOpenModal(false);
     setSteps(0);
     setShowViewConfirmPay(0);
+    setDataTransaction(structurePayment);
+    setDataUser(structureDataUser);
+    localStorage.removeItem("dataUser");
+    localStorage.removeItem("dataPayment");
     localStorage.removeItem("valueShowViewConfirmPay");
     localStorage.removeItem("openModalStorage");
     localStorage.setItem("steps",0);
@@ -287,13 +292,19 @@ const CartDetail = () => {
     fetchTransaction(randomNumber)
     .then(res=>{
       setData(res);
-      localStorage.removeItem("openModalStorage");
+      /* localStorage.removeItem("openModalStorage");
       localStorage.removeItem("steps");
       localStorage.removeItem("productsCart");
       localStorage.removeItem("valueShowViewConfirmPay");
+      localStorage.removeItem("dataUser");
+      localStorage.removeItem("dataPayment"); */
+
+      localStorage.clear();
       setShowViewConfirmPay(0);
       dispatch(clearCart());
       setOpenModal(false);
+      setDataTransaction(structurePayment);
+      setDataUser(structureDataUser);
     })
     .catch(error=>setError(error.message))
     .finally(()=>setLoading(false))
