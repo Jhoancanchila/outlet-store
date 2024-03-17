@@ -292,13 +292,7 @@ const CartDetail = () => {
     fetchTransaction(randomNumber)
     .then(res=>{
       setData(res);
-      /* localStorage.removeItem("openModalStorage");
-      localStorage.removeItem("steps");
-      localStorage.removeItem("productsCart");
-      localStorage.removeItem("valueShowViewConfirmPay");
-      localStorage.removeItem("dataUser");
-      localStorage.removeItem("dataPayment"); */
-
+  
       localStorage.clear();
       setShowViewConfirmPay(0);
       dispatch(clearCart());
@@ -309,6 +303,18 @@ const CartDetail = () => {
     .catch(error=>setError(error.message))
     .finally(()=>setLoading(false))
   };
+
+  const getTotalValue = () => {
+    let neArrayValues = [];
+    productsCart.forEach(element => {
+    let valueXproduct = element.price * element.quantity;
+    neArrayValues.push(valueXproduct);
+    });
+    const subTotal = neArrayValues.reduce((acumulador, valorActual) => acumulador + valorActual, 0).toFixed(2);
+    return subTotal;
+  };
+
+  const totalCheckout = getTotalValue();
 
   if(loading){
     return(
@@ -364,11 +370,11 @@ const CartDetail = () => {
                 <dl className="space-y-0.5 text-sm text-gray-700">
                   <div className="flex justify-between">
                     <dt>Subtotal</dt>
-                    <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
+                    <dd>{`USD ${productsCart ? totalCheckout : 0}`}</dd>
                   </div>
                   <div className="flex justify-between !text-base font-medium">
                     <dt>Total</dt>
-                    <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
+                    <dd>{`USD ${productsCart ? totalCheckout : 0}`}</dd>
                   </div>
                 </dl>
 
