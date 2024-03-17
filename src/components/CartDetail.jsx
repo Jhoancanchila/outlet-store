@@ -184,6 +184,11 @@ const CartDetail = () => {
     setSteps(newStep);
     localStorage.setItem("steps",newStep);
   };
+
+  const reviewDataProvided = () => {
+    setOpenModal(true);
+    localStorage.setItem("openModalStorage",true);
+  };
   
   const handleChangeDataUser = (e,key) => {
     const { value } = e.target;
@@ -280,8 +285,6 @@ const CartDetail = () => {
     }else{
       setShowViewConfirmPay(1);
       localStorage.setItem("valueShowViewConfirmPay",1);
-      setSteps(0); 
-      localStorage.removeItem("steps");
       localStorage.removeItem("openModalStorage");
       setOpenModal(false);
     }     
@@ -302,13 +305,17 @@ const CartDetail = () => {
       setDataTransaction(structurePayment);
       setDataUser(structureDataUser);
     })
-    .catch(error=>setError(error.message))
+    .catch(error=>{
+      setOpenModal(true);
+      localStorage.setItem("openModalStorage",true);
+      setError(error.message);
+    })
     .finally(()=>setLoading(false))
   };
 
   const getTotalValue = () => {
     let neArrayValues = [];
-    productsCart.forEach(element => {
+    productsCart?.forEach(element => {
     let valueXproduct = element.price * element.quantity;
     neArrayValues.push(valueXproduct);
     });
@@ -398,16 +405,14 @@ const CartDetail = () => {
       <section className={openModal ? 'overflow-hidden' : ''}>
       <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <div className="mx-auto max-w-3xl">
-          <header className="text-center">
+          <header className="flex items-center justify-between">
+            <span onClick={reviewDataProvided} className="hover:bg-gray-600 cursor-pointer w-12 h-12 rounded-full flex items-center justify-center p-4 bg-[#efefef]">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+              </svg>
+            </span>
             <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Detalles del pago</h1>
           </header>
-          {
-            error &&
-            <span className="text-xl text-center text-red-400">
-              {error}
-            </span>
-          }
-          <div className="mt-8">
+          <div className="mt-16">
             <ul className="space-y-4">
               {
                 productsCart?.map(product => (
@@ -748,6 +753,12 @@ const CartDetail = () => {
                   <h2 className="text-3xl font-bold sm:text-4xl">Paga con tu tarjeta</h2>
                 </div>
               </div>
+              {
+                error &&
+                <span className="text-xl text-center mt-4 text-red-400">
+                  {error}
+                </span>
+              }
               <form className="flex-col gap-4 mt-8">
                 <div className="h-24">
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> número de la tarjeta </label>
@@ -773,7 +784,7 @@ const CartDetail = () => {
                     }
                 </div>
                   <div className="h-24">
-                    <div className="mt-4 flex items-center">
+                    <div className="flex items-center">
                       <div>
                         <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Expira el</label>
                         <div className="flex">
@@ -823,7 +834,7 @@ const CartDetail = () => {
                         <span className="text-red-500 ml-40">{dataTransaction.CVC.textSuggestion}</span>
                       }
                   </div>
-                <div className="mt-4 h-24">
+                <div className="h-24">
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Nombre en la tarjeta</label>
                   <input
                     onChange={(e) => handleChangeDataPayment(e,"NAME_TITULAR")}
@@ -841,7 +852,7 @@ const CartDetail = () => {
                 </div>
                 <div className="h-24">
 
-                  <div className="mt-4">
+                  <div>
                     <label htmlFor="Name" className="block text-sm font-medium text-gray-700"><label htmlFor="Email" className="block text-sm font-medium text-gray-700">Identificación del tarjetahabiente </label> </label>
                     <div className="flex">
                       <select 
@@ -873,7 +884,7 @@ const CartDetail = () => {
                     <span className="text-red-500 ml-20">{dataTransaction.DOCUMENT_TITULAR.textSuggestion}</span>
                   }
                 </div>
-                <div className="mt-4">
+                <div>
                   <label htmlFor="Email" className="block text-sm font-medium text-gray-700">Número de cuotas </label>
                   <select 
                   onChange={(e) => handleChangeDataPayment(e,"NUMBER_QUOTAS")}
@@ -912,7 +923,7 @@ const CartDetail = () => {
                   <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                     <button
                       onClick={(e) => handleContinuePay(e)}
-                      className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide"
+                      className="mt-4 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide"
                     >
                       Continuar con tu pago
                     </button>                   
