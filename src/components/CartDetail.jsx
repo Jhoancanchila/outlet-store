@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { handleAddTocart, handleDeleteTocart } from "../functions";
+import { fetchTransaction, handleAddTocart, handleDeleteTocart } from "../functions";
 import { useDispatch } from "react-redux";
 import { Fragment, useEffect, useState } from "react";
 import masterLogo  from "../assets/master.png";
@@ -7,11 +7,17 @@ import visaLogo  from "../assets/visa.png";
 import billeteraLogo  from "../assets/billetera.png";
 import pagoLogo  from "../assets/pago.png";
 import Modal from "./Modal";
+import { clearCart } from "../redux/actions";
+import { SpinnerInfinity } from 'spinners-react/lib/esm/SpinnerInfinity';
 
 const CartDetail = () => {
-  const stepsStorage = localStorage.getItem("steps");
+  const stepsStorage = parseInt(localStorage.getItem("steps"),10);
   const openModalStorage = localStorage.getItem("openModalStorage");
   const [openModal, setOpenModal] = useState(openModalStorage ? Boolean(openModalStorage)  : false);
+  const [loading, setLoading] = useState(false);
+  const [showViewConfirmPay, setShowViewConfirmPay] = useState(0);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
   const [steps, setSteps] = useState(stepsStorage ? stepsStorage : 0);
   const [dataTransaction, setDataTransaction] = useState({
     numberCard: "",
@@ -71,6 +77,8 @@ const CartDetail = () => {
   const handleCancelTransaction = () => {
     setOpenModal(false);
     setSteps(0);
+    setShowViewConfirmPay(0);
+    localStorage.removeItem("valueShowViewConfirmPay");
     localStorage.removeItem("openModalStorage");
     localStorage.setItem("steps",0);
   };
@@ -85,9 +93,192 @@ const CartDetail = () => {
     const { name, value } = e.target;
     setDataUser({...dataUser,[name]: value});
   };
+
+  const handleContinuePay = (e) => {
+    setShowViewConfirmPay(1);
+    localStorage.setItem("valueShowViewConfirmPay",1);
+    setSteps(0); 
+    localStorage.removeItem("steps",3);
+    localStorage.removeItem("openModalStorage");
+    setOpenModal(false);
+  };
+
+  const handleTransaction = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const randomNumber = Math.floor(Math.random() * 5) + 1;
+    fetchTransaction(randomNumber)
+    .then(res=>{
+      setData(res);
+      localStorage.removeItem("openModalStorage");
+      localStorage.removeItem("steps");
+      localStorage.removeItem("productsCart");
+      localStorage.removeItem("valueShowViewConfirmPay");
+      setShowViewConfirmPay(0);
+      dispatch(clearCart());
+      setOpenModal(false);
+    })
+    .catch(error=>setError(error.message))
+    .finally(()=>setLoading(false))
+  };
+
+  if(loading){
+    return(
+      <div className="w-full h-full rounded-3xl bg-transparent z-20 flex items-center justify-center absolute top-0 left-0 bottom-0 right-0">
+        <SpinnerInfinity
+          size={50}
+          color="#dfff61"
+          secondaryColor="#2c2a29"
+          enabled={loading}
+        />
+      </div>
+    )
+  };
   
   return (
     <Fragment>
+      {
+      data.status === 200 ?
+      <section className={openModal ? 'overflow-hidden' : ''}>
+      <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="mx-auto max-w-3xl">
+          <header className="text-center">
+            <h1 className="text-xl font-bold text-green-500 sm:text-3xl">{data.message}</h1>
+          </header>
+          <div className="mt-8">
+            <ul className="space-y-4">
+              {
+                productsCart?.map(product => (
+                  <li key={product.id} className="flex items-center gap-4">
+                    <img
+                      src={product.image}
+                      alt="imagen-producto"
+                      className="size-16 rounded object-cover"
+                    />
+
+                    <div>
+                      <h3 className="text-sm text-gray-900">{product.title}</h3>
+
+                      <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+                        <div>
+                          <dt className="inline">Price:</dt>
+                          <dd className="inline">{`USD ${product.price}`}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <div className="mt-8 flex justify-end border-t border-gray-100 pt-8">
+              <div className="w-screen max-w-lg space-y-4">
+                <dl className="space-y-0.5 text-sm text-gray-700">
+                  <div className="flex justify-between">
+                    <dt>Subtotal</dt>
+                    <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
+                  </div>
+                  <div className="flex justify-between !text-base font-medium">
+                    <dt>Total</dt>
+                    <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
+                  </div>
+                </dl>
+
+                <div className="flex justify-end">
+                  <Link
+                    to="/"
+                    className="mt-1.5 inline-block bg-indigo-700  px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                  >
+                    Seguir comprando
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </section>
+      : showViewConfirmPay === 1 ?
+      <section className={openModal ? 'overflow-hidden' : ''}>
+      <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="mx-auto max-w-3xl">
+          <header className="text-center">
+            <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Detalles del pago</h1>
+          </header>
+          {
+            error &&
+            <span className="text-xl text-center text-red-400">
+              {error}
+            </span>
+          }
+          <div className="mt-8">
+            <ul className="space-y-4">
+              {
+                productsCart?.map(product => (
+                  <li key={product.id} className="flex items-center gap-4">
+                    <img
+                      src={product.image}
+                      alt="imagen-producto"
+                      className="size-16 rounded object-cover"
+                    />
+
+                    <div>
+                      <h3 className="text-sm text-gray-900">{product.title}</h3>
+
+                      <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+                        <div>
+                          <dt className="inline">Price:</dt>
+                          <dd className="inline">{`USD ${product.price}`}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <div className="mt-8 flex justify-end border-t border-gray-100 pt-8">
+              <div className="w-screen max-w-lg space-y-4">
+                <dl className="space-y-0.5 text-sm text-gray-700">
+                  <div className="flex justify-between">
+                    <dt>Nombre</dt>
+                    <dd>{dataTransaction.name}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt>Cédula</dt>
+                    <dd>{dataTransaction.numberDocument}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt>Nro Tarjeta</dt>
+                    <dd>{`**** **** **** ${dataTransaction.numberCard.substring(14,dataTransaction.numberCard.length)}`}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt>Total a pagar</dt>
+                    <dd>{`USD ${productsCart ? valueTotalCart : 0}`}</dd>
+                  </div>
+                </dl>
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleTransaction}
+                    className="mt-1.5 inline-block bg-indigo-700  px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                  >
+                    Confirmar pago
+                  </button>
+                  <button
+                    onClick={handleCancelTransaction}
+                    className="mt-1.5 ml-4 inline-block bg-indigo-700  px-5 py-3 text-xs font-medium uppercase tracking-wide text-white"
+                  >
+                    Cancelar transacción
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+      :
       <section className={openModal ? 'overflow-hidden' : ''}>
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div className="mx-auto max-w-3xl">
@@ -196,6 +387,7 @@ const CartDetail = () => {
           </div>
         </div>
       </section>  
+      }
       <Modal isOpen={openModal} onClose={() =>setOpenModal(false)}>
         {
           steps === 0 ?
@@ -322,7 +514,7 @@ const CartDetail = () => {
                     <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                       <button
                         onClick={()=>{setSteps(2); localStorage.setItem("steps",2)}}
-                        className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] hover:opacity-10 px-5 py-3 text-xs font-medium uppercase tracking-wide "
+                        className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide "
                       >
                         Continuar con tu pago
                       </button>                   
@@ -334,6 +526,7 @@ const CartDetail = () => {
           )
           :
           steps === 2 ?
+          
           (
             <section className="py-8 px-4 sm:p-8">
               <div className="flex items-center">
@@ -407,7 +600,7 @@ const CartDetail = () => {
                     value={dataTransaction.cvc}
                     type="text"
                     maxLength={3}
-                    className="mt-1 h-12 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    className="mt-1 h-12 pl-4 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                   />
                 </div>
                 </div>
@@ -481,10 +674,11 @@ const CartDetail = () => {
                       </span>
                     </label>
                   </div>
-
+                  
 
                   <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                     <button
+                      onClick={handleContinuePay}
                       className="mt-8 inline-block bg-[#2c2a29] text-[#dfff61] px-5 py-3 text-xs font-medium uppercase tracking-wide"
                     >
                       Continuar con tu pago
@@ -494,7 +688,7 @@ const CartDetail = () => {
             </section>
           )
           :
-          null
+          <p>hay error</p>
         }
       </Modal>  
     </Fragment>

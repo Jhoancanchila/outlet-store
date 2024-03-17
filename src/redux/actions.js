@@ -6,6 +6,7 @@ export const FETCH_PRODUCT_BY_ID_SUCCESS = "FETCH_PRODUCT_BY_ID_SUCCESS";
 export const FETCH_PRODUCT_BY_ID_FAILURE = "FETCH_PRODUCT_BY_ID_FAILURE";
 export const ADD_TO_CART = "ADD_TO_CART";
 export const REMOVE_TO_CART = "REMOVE_TO_CART";
+export const CLEAR_CART = "CLEAR_CART";
 
 export const fetchProductsRequest = () => ({
   type: FETCH_PRODUCTS_REQUEST
@@ -36,4 +37,7 @@ export const addToCart = (product) => ({
 export const removeToCart = (product) => ({
   type: REMOVE_TO_CART,
   payload: product
+}) 
+export const clearCart = (product) => ({
+  type: CLEAR_CART,
 }) 
