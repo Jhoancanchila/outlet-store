@@ -5,9 +5,11 @@ const Layout = ({children}) => {
   return (
     <Fragment>
       <Header/>
-      {
-        children
-      }
+        <div className='pt-16'>
+          {
+            children
+          }
+        </div>
     </Fragment>
   )
 }
