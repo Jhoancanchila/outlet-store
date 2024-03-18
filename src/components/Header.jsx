@@ -13,7 +13,7 @@ export const Header = () => {
   const quantityProductsCart = cartQuantity();
   const [ quantityProducts,setQuantityProducts ] = useState(0);
   const [ isOpenMenu,setIsOpenMenu ] = useState(false);
-  const [ itemSelected,setItemSelected ] = useState(menuSelectedStorage ?? '');
+  const [ itemSelected,setItemSelected ] = useState(menuSelectedStorage ?? "HOME");
 
   useEffect(() => {
     setQuantityProducts(quantityProductsCart);
@@ -95,7 +95,7 @@ export const Header = () => {
         <div className="w-full z-10 fixed top-12">
           <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
             <li onClick={() => handleHiddenMenu("HOME")}>
-              <Link to="/" className={`${itemSelected === "HOME" ? 'bg-indigo-600 text-white' : 'text-gray-900 hover:bg-gray-100'} block py-2 px-3  rounded dark:bg-blue-600`} aria-current="page">Home</Link>
+              <Link to="/" className={`${itemSelected === "HOME" ? 'bg-indigo-600 text-white' : 'text-gray-900 hover:bg-gray-100'} block py-2 px-3  rounded dark:bg-blue-600`} aria-current="page">Inicio</Link>
             </li>
             <li onClick={() => handleHiddenMenu("WOMEN")}>
               <Link to="/mujer" className={`${itemSelected === "WOMEN" ? 'bg-indigo-600 text-white' : 'text-gray-900 hover:bg-gray-100'} block py-2 px-3  rounded dark:bg-blue-600`}>Mujer</Link>

@@ -279,7 +279,7 @@ const CartDetail = () => {
       "CHECKED": {
         val: dataTransaction.CHECKED.val,
         error: !dataTransaction.CHECKED.val ? true : false,
-        textSuggestion: !dataTransaction.CHECKED.val ? "Campo obligatorio" : ""
+        textSuggestion: !dataTransaction.CHECKED.val ? "Acepta los terminos" : ""
         }
       });
     }else{
