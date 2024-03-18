@@ -154,7 +154,7 @@ const CartDetail = () => {
   };
 
   const handleCvcCard = ( e ) => {
-    let inputValue = e.target.value;
+    let inputValue = e.target.value.replace(/ /g, "");
     let trim = inputValue.replace(/[^\d\s]/g, "");
     setDataTransaction({
       ...dataTransaction,
@@ -279,7 +279,7 @@ const CartDetail = () => {
       "CHECKED": {
         val: dataTransaction.CHECKED.val,
         error: !dataTransaction.CHECKED.val ? true : false,
-        textSuggestion: !dataTransaction.CHECKED.val ? "Campo obligatorio" : ""
+        textSuggestion: !dataTransaction.CHECKED.val ? "Acepta los terminos" : ""
         }
       });
     }else{
