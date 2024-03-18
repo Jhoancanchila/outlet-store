@@ -1,4 +1,4 @@
-import CartDetail from "../components/CartDetail";
+import CartDetail from "../components/DetailPresentation";
 
 const Cart = () => {
   return (
