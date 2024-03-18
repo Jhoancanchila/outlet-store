@@ -16,7 +16,15 @@ export const useFetchProducts = (category) => {
         if(category !== "all"){
           url = `https://fakestoreapi.com/products/category/${category}`;
         }
-        const response = await axios.get(url)
+        const response = await axios.get(url,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            'X-Content-Type-Options': 'nosniff',
+            'X-Frame-Options': 'SAMEORIGIN',
+            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+          }
+      })
         const products = response.data.map(product => ({
           id: product.id,
           image: product.image,
